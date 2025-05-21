@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+
+.env
+
+
+# Environments
+env/
+venv/
+ENV/
+.venv/
+
+# VSCode / PyCharm
+.vscode/
+.idea/
+
+# Django
+*.db
+*.pot
+*.pyc
+*.pyo
+*.pyd
+*.swp
+db.sqlite3
+media/
+staticfiles/
+render/
+
+/.render/
