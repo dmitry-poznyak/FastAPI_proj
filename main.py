@@ -38,6 +38,23 @@ def create_recipe(recipe: schemas.RecipeCreate, db: Session = Depends(get_db)):
     db.refresh(db_recipe)
     return db_recipe
 
+@app.post("/ingredients/", response_model=schemas.IngredientOut)
+def create_ingredient(ingredient: schemas.IngredientCreate, db: Session = Depends(get_db)):
+    db_ingredient = models.Ingredient(name=ingredient.name)
+    db.add(db_ingredient)
+    db.commit()
+    db.refresh(db_ingredient)
+    return db_ingredient
+
+
+@app.post("/categories/", response_model=schemas.CategoryOut)
+def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_db)):
+    db_category = models.Category(name=category.name)
+    db.add(db_category)
+    db.commit()
+    db.refresh(db_category)
+    return db_category
+
 @app.get("/recipes/", response_model=list[schemas.RecipeOut])
 def read_recipes(skip: int = 0, limit: int = 10, db: Session = Depends(get_db)):
     recipes = db.query(models.Recipe).offset(skip).limit(limit).all()
@@ -86,3 +103,13 @@ def search_recipes(
         query = query.filter(models.Recipe.description.ilike(f"%{description}%"))
 
     return query.all()
+
+@app.get("/recipes/by_ingredient/{ingredient_id}", response_model=List[schemas.RecipeOut])
+def get_recipes_by_ingredient(ingredient_id: int, db: Session = Depends(get_db)):
+    recipes = db.query(models.Recipe).join(models.Recipe.ingredients).filter(models.Ingredient.id == ingredient_id).all()
+    return recipes
+
+@app.get("/recipes/by_category/{category_id}", response_model=List[schemas.RecipeOut])
+def get_recipes_by_category(category_id: int, db: Session = Depends(get_db)):
+    recipes = db.query(models.Recipe).join(models.Recipe.categories).filter(models.Category.id == category_id).all()
+    return recipes

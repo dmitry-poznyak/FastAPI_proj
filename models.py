@@ -32,7 +32,7 @@ class Recipe(Base):
     description = Column(Text, nullable=False)
     steps = Column(Text, nullable=False)
     cooking_time = Column(Integer, nullable=False)
-    author_id = Column(Integer)  # Можно добавить ForeignKey, если есть связь с пользователем
+    author_id = Column(Integer) 
     image = Column(String(100), nullable=True)
 
     ingredients = relationship(
