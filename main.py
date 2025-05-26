@@ -14,7 +14,25 @@ app = FastAPI(
 
 @app.post("/recipes/", response_model=schemas.RecipeOut)
 def create_recipe(recipe: schemas.RecipeCreate, db: Session = Depends(get_db)):
-    db_recipe = models.Recipe(**recipe.dict())
+    db_recipe = models.Recipe(
+        title=recipe.title,
+        description=recipe.description,
+        steps=recipe.steps,
+        cooking_time=recipe.cooking_time,
+        author_id=recipe.author_id,
+        image=recipe.image
+    )
+
+    # Привязка ингредиентов
+    if recipe.ingredient_ids:
+        ingredients = db.query(models.Ingredient).filter(models.Ingredient.id.in_(recipe.ingredient_ids)).all()
+        db_recipe.ingredients = ingredients
+
+    # Привязка категорий
+    if recipe.category_ids:
+        categories = db.query(models.Category).filter(models.Category.id.in_(recipe.category_ids)).all()
+        db_recipe.categories = categories
+
     db.add(db_recipe)
     db.commit()
     db.refresh(db_recipe)
